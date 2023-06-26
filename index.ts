@@ -1,14 +1,27 @@
-import { WebSocket } from "ws";
 import  dotenv from "dotenv";
-import express, { Express, Request, Response } from 'express';
+import express from 'express'
+import { Server } from 'socket.io';
+import { Message, MessageRequest } from "./models";
+
 
 dotenv.config();
 
-const socketServer = new WebSocket.Server({ port: 8080 });
+const app = express();
+const server = app.listen(3000, () => console.log('App started on port 3000'));
 
-socketServer.on("connection", (socket) => {
+const socketIo = new Server(server, {
+  cors: {
+    origin: '*'
+  }
+})
+
+socketIo.on("connection", (socket) => {
   socket.on("message", (message) => {
-    console.log(`Roger that! ${message}`);
-    socket.send(message);
+    const request = message as MessageRequest;
+    console.log(`Roger that! ${request?.message}`);
+    socketIo.emit('message', {
+      type: request?.type,
+      message: message?.message
+    } as MessageRequest);
   });
 });
