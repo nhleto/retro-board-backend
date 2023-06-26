@@ -11,6 +11,7 @@ const server = app.listen(3000, () => console.log('App started on port 3000'));
 
 const socketIo = new Server(server, {
   cors: {
+    // TODO: Change before go live
     origin: '*'
   }
 })
@@ -18,10 +19,13 @@ const socketIo = new Server(server, {
 socketIo.on("connection", (socket) => {
   socket.on("message", (message) => {
     const request = message as MessageRequest;
-    console.log(`Roger that! ${request?.message}`);
-    socketIo.emit('message', {
-      type: request?.type,
-      message: message?.message
+    const groupId = request.groupId;
+    
+    socket.join(groupId);
+    socketIo.to(groupId).emit('message', {
+      type: request.type,
+      message: message?.message,
+      groupId: request.groupId
     } as MessageRequest);
   });
 });
