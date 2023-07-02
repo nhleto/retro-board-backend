@@ -1,8 +1,7 @@
 import  dotenv from "dotenv";
 import express from 'express'
 import { Server } from 'socket.io';
-import { Message, MessageRequest } from "./models";
-
+import { MessageRequest } from "./models";
 
 dotenv.config();
 
@@ -11,8 +10,7 @@ const server = app.listen(3000, () => console.log('App started on port 3000'));
 
 const socketIo = new Server(server, {
   cors: {
-    // TODO: Change before go live
-    origin: '*'
+    origin: ['http://localhost:4200', 'https://lucid-board.netlify.app']
   }
 })
 
